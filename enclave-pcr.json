@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-06-30",
+  "current": "1.2.0",
+  "versions": [
+    {
+      "version": "1.2.0",
+      "releasedAt": "2026-06-30",
+      "status": "active",
+      "pcr0": "<48-byte-hex>",
+      "pcr1": "<48-byte-hex>",
+      "pcr2": "<48-byte-hex>"
+    },
+    {
+      "version": "1.1.0",
+      "releasedAt": "2026-05-15",
+      "status": "deprecated",
+      "pcr0": "...",
+      "pcr1": "...",
+      "pcr2": "..."
+    }
+  ]
+}
