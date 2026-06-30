@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qore3 Enclave — PCR Versions</title>
+  <style>
+    :root {
+      --bg: #0d1117; --panel: #161b22; --border: #30363d;
+      --text: #e6edf3; --muted: #8b949e; --accent: #2f81f7;
+      --green: #2ea043; --green-bg: #1a2f1f; --gray: #6e7681;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 32px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5;
+    }
+    .wrap { max-width: 1000px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    .sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+    .current {
+      background: var(--panel); border: 1px solid var(--border);
+      border-left: 3px solid var(--green); border-radius: 8px;
+      padding: 16px 18px; margin-bottom: 28px;
+    }
+    .current .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .current .ver { font-size: 20px; font-weight: 600; margin: 2px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 12px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge.active { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+    .badge.deprecated { background: #21262d; color: var(--gray); border: 1px solid var(--gray); }
+    .pcr { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+    .pcr-row { display: flex; gap: 8px; margin: 2px 0; align-items: baseline; }
+    .pcr-row .k { color: var(--accent); min-width: 38px; }
+    .pcr-row .v { color: var(--text); word-break: break-all; }
+    .ver-cell { font-weight: 600; white-space: nowrap; }
+    .date-cell { color: var(--muted); white-space: nowrap; }
+    .err { background: #2d1416; border: 1px solid #f85149; color: #ffa198; padding: 16px; border-radius: 8px; }
+    a { color: var(--accent); }
+    footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Qore3 Enclave — PCR Versions</h1>
+    <div class="sub" id="meta">Loading…</div>
+    <div id="content"></div>
+    <footer>
+      Raw data: <a href="./enclave-pcr.json">enclave-pcr.json</a>
+    </footer>
+  </div>
+
+  <script>
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c =>
+      ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+
+    function pcrRows(v) {
+      return ["pcr0", "pcr1", "pcr2"].map(k =>
+        `<div class="pcr-row"><span class="k">${k.toUpperCase()}</span><span class="v">${esc(v[k] || "—")}</span></div>`
+      ).join("");
+    }
+
+    fetch("./enclave-pcr.json", { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(data => {
+        const versions = data.versions || [];
+        const current = data.current;
+        const cur = versions.find(v => v.version === current);
+
+        document.getElementById("meta").textContent =
+          `Schema v${data.schemaVersion ?? "?"} · updated ${data.updatedAt ?? "?"} · ${versions.length} version(s)`;
+
+        const curHtml = cur ? `
+          <div class="current">
+            <div class="label">Current version (verify against this)</div>
+            <div class="ver">${esc(cur.version)}</div>
+            <div class="pcr">${pcrRows(cur)}</div>
+          </div>` : "";
+
+        const rows = versions.map(v => `
+          <tr>
+            <td class="ver-cell">${esc(v.version)}${v.version === current ? " ★" : ""}</td>
+            <td class="date-cell">${esc(v.releasedAt || "—")}</td>
+            <td><span class="badge ${v.status === "active" ? "active" : "deprecated"}">${esc(v.status || "—")}</span></td>
+            <td class="pcr">${pcrRows(v)}</td>
+          </tr>`).join("");
+
+        document.getElementById("content").innerHTML = curHtml + `
+          <table>
+            <thead>
+              <tr><th>Version</th><th>Released</th><th>Status</th><th>Measurements</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+      })
+      .catch(err => {
+        document.getElementById("meta").textContent = "";
+        document.getElementById("content").innerHTML =
+          `<div class="err">Failed to load enclave-pcr.json — ${esc(err.message)}</div>`;
+      });
+  </script>
+</body>
+</html>
