@@ -1,12 +1,20 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-08-05",
-  "current": "1.7.0",
+  "current": "1.8.0",
   "versions": [
+    {
+      "version": "1.8.0",
+      "releasedAt": "2026-08-05",
+      "status": "active",
+      "pcr0": "8874913009d248d6237971db7dfbbdb89a6425b7d64e2ac18a4acb1aaf1893948afddeb42cb2b70820fd9c8b2dfd26e3",
+      "pcr1": "3b4a7e1b5f13c5a1000b3ed32ef8995ee13e9876329f9bc72650b918329ef9cf4e2e4d1e1e37375dab0ba56ba0974d03",
+      "pcr2": "329a6f248a1531408ed4dc4bad920f9c3784c59f774334809ff077d3cf846970f57eeae220d57824f4e4d8c4de180575"
+    },
     {
       "version": "1.7.0",
       "releasedAt": "2026-08-05",
-      "status": "active",
+      "status": "superseded",
       "pcr0": "cf86d6d56ba642078061f695cd61497ee54a35dae822e99acf99542d0b113ad58f64f39395d1b0a03cede3c7b01c0588",
       "pcr1": "3b4a7e1b5f13c5a1000b3ed32ef8995ee13e9876329f9bc72650b918329ef9cf4e2e4d1e1e37375dab0ba56ba0974d03",
       "pcr2": "9c32bd45f546edfe234fd08f7af731bd4082820d0d66598ee103913574cd77b93b88d3562b6270af4d8a41ee7087a40e"
